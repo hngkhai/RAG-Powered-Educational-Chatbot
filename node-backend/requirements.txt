@@ -1,0 +1,8 @@
+express
+mongoose 
+bcryptjs 
+jsonwebtoken 
+cors 
+dotenv
+express-validator
+@fortawesome/react-fontawesome @fortawesome/free-solid-svg-icons
