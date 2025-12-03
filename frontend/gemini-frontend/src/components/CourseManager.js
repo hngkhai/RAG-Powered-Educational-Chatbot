@@ -50,7 +50,7 @@ function CourseManager({ student, selectedCourse, onCourseChange }) {
     setError("");
     try {
       const body = {
-        name: name.trim(),
+        title: name.trim(),
         code: code.trim(),
         studentId: student._id || student.id
       };
@@ -91,7 +91,7 @@ function CourseManager({ student, selectedCourse, onCourseChange }) {
                   className={"pill" + (isActive ? " pill-active" : "")}
                   onClick={() => onCourseChange(course)}
                 >
-                  {(course.code || "Course") + " · " + (course.name || "Untitled")}
+                  {(course.code || "Course") + " · " + (course.title || "Untitled")}
                 </button>
               );
             })}

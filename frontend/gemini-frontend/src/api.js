@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5173";
+const API_BASE_URL = "http://localhost:5000";
 
 export async function apiRequest(path, options = {}) {
   const method = options.method || "GET";

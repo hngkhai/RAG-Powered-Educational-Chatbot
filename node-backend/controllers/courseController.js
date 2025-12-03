@@ -3,7 +3,7 @@ const Course = require("../models/Course");
 // ------------------- Create New Course -------------------
 exports.createCourse = async (req, res) => {
   try {
-    const { title, chapters, studentId } = req.body;
+    const { title, course_code, studentId } = req.body;
 
     if (!studentId) {
       return res.status(400).json({ message: "studentId is required" });
@@ -11,7 +11,7 @@ exports.createCourse = async (req, res) => {
 
     const course = new Course({
       title,
-      chapters,
+      course_code,
       studentId,
     });
 

@@ -11,11 +11,11 @@ const upload = multer({ storage });
 // ------------------- Register Student -------------------
 exports.registerStudent = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email } = req.body;
     const existing = await Student.findOne({ email });
     if (existing) return res.status(400).json({ message: "Email already exists" });
 
-    const student = new Student({ name, email, password });
+    const student = new Student({ name, email});
     await student.save();
     res.status(201).json(student);
   } catch (error) {

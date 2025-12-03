@@ -2,7 +2,7 @@ const File = require("../models/File");
 const Chapter = require("../models/Chapter");
 const multer = require("multer");
 const { ObjectId } = require("mongodb");
-
+const { getGfsBucket } = require("../utils/gridfs");
 // Multer setup (memory storage)
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -10,6 +10,7 @@ const upload = multer({ storage });
 // Upload file (GridFS + metadata + File collection)
 const uploadFile = async (req, res) => {
   try {
+    const gfsBucket = getGfsBucket();
     const { studentId, courseId, chapterId } = req.body;
     const file = req.file;
 
@@ -30,10 +31,10 @@ const uploadFile = async (req, res) => {
     uploadStream.on("finish", async (uploadedFile) => {
       // Save metadata reference in File collection
       const newFile = new File({
-        filename: uploadedFile.filename,
-        contentType: uploadedFile.contentType,
-        size: uploadedFile.length,
-        uploadDate: uploadedFile.uploadDate,
+        //filename: uploadedFile.filename,
+        //contentType: uploadedFile.contentType,
+        //size: uploadedFile.length,
+        //uploadDate: uploadedFile.uploadDate,
         studentId,
         courseId,
         chapterId,
@@ -49,8 +50,8 @@ const uploadFile = async (req, res) => {
         message: "File uploaded successfully",
         file: {
           id: newFile._id,
-          gridfsId: uploadedFile._id,
-          filename: newFile.filename,
+          //gridfsId: uploadedFile._id,
+          name: newFile.name,
         },
       });
     });
@@ -74,18 +75,18 @@ const getFiles = async (req, res) => {
     if (studentId) query["metadata.studentId"] = studentId;
     if (courseId) query["metadata.courseId"] = courseId;
     if (chapterId) query["metadata.chapterId"] = chapterId;
-
+    const gfsBucket = getGfsBucket();
     const files = await gfsBucket.find(query).toArray();
     if (!files || files.length === 0)
       return res.status(404).json({ error: "No files found." });
-
+    
     const formatted = files.map((f) => ({
       id: f._id,
-      filename: f.filename,
-      contentType: f.contentType,
-      size: f.length,
-      uploadDate: f.uploadDate,
-      metadata: f.metadata,
+      //filename: f.filename,
+      //contentType: f.contentType,
+      //size: f.length,
+      //uploadDate: f.uploadDate,
+      //metadata: f.metadata,
     }));
 
     res.status(200).json({ files: formatted });

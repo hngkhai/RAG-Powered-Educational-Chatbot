@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 
 const fileSchema = new mongoose.Schema({
-  filename: { type: String, required: true },
-  contentType: { type: String, required: true },
-  size: { type: Number, required: true },
-  uploadDate: { type: Date, default: Date.now },
-  metadata: { type: Object },
+  name: { type: String, required: false },
+  contentType: { type: String, required: false },
+  size: { type: Number, required: false },
+  uploadDate: { type: Date, default: Date.now,  required: false  },
+  metadata: { type: Object, required: false  },
 
   // Relationships
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
