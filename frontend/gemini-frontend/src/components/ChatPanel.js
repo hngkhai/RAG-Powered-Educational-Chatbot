@@ -24,7 +24,12 @@ function ChatPanel({ chapter, student, course }) {
     setLoading(true);
     setError("");
     try {
-      const body = { message: text };
+     //////////////Correction_CK////////////////// 
+      const body = { 
+          message: text, 
+          studentId: student._id || student.id, // Ensure you are sending these!
+          sender: "student"       // Ensure you are sending these!
+      };
       const data = await apiRequest("/api/conversations/" + (chapter._id || chapter.id), {
         method: "POST",
         body
