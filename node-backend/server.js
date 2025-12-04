@@ -28,7 +28,7 @@ app.use("/api/chapters", chapterRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/api/conversations", conversationRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 
 

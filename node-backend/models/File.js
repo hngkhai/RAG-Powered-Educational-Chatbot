@@ -6,6 +6,7 @@ const fileSchema = new mongoose.Schema({
   size: { type: Number, required: false },
   uploadDate: { type: Date, default: Date.now,  required: false  },
   metadata: { type: Object, required: false  },
+  gridFsId: { type: mongoose.Schema.Types.ObjectId, required: true },
 
   // Relationships
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },

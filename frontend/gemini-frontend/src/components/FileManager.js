@@ -122,7 +122,7 @@ function FileManager({ student, course, chapter }) {
             return (
               <div key={id} className="file-item">
                 <div className="file-main">
-                  <div className="file-name">{file.originalname || file.name || "File"}</div>
+                  <div className="file-name">{file.filename || file.name || "File"}</div>
                   <div className="file-meta">
                     {file.mimetype || file.type || ""}
                   </div>

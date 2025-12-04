@@ -12,13 +12,12 @@ from bson import ObjectId
 from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 from PyPDF2 import PdfReader
 from pymongo import MongoClient
 import gridfs
 import uvicorn
-
+# from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings
 
 def retrieve_file_by_id(mongo_uri: str, db_name: str, file_id: str) -> Tuple[Optional[bytes], Optional[str]]:
     try:
