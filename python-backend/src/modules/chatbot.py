@@ -54,12 +54,16 @@ def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_
     ### Reference Context:
     {retrieval_context}
     """
+
     response = llm.invoke([
         SystemMessage(content=sysmsg),
         HumanMessage(content=query),
         retrieval_context
     ])
-    return {"response": response.content}
+    return {
+        "response": response.content,
+        "context": retrieval_context 
+    }
 
 
 
