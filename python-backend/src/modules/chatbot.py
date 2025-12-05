@@ -28,11 +28,11 @@ def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_
 
     retriever = faissDB.as_retriever(
         search_type="similarity_score_threshold",
-        search_kwargs={'score_threshold': 0.5}
+        # search_kwargs={'score_threshold': 0.2}
     )
 
     llm = ChatGoogleGenerativeAI(
-        model="gemini-pro",
+        model="gemini-2.0-flash",
         temperature=0,
         max_tokens=None,
         timeout=None,

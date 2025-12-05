@@ -56,7 +56,7 @@ async def read_root():
 @app.post("/generate-quiz")
 async def chat_endpoint(request: QuizRequest):
     result = run_application(
-        mongo_uri=os.getenv("MONGO_URI"),
+        mongo_uri="mongodb+srv://GuruAI_Admin:13579246810@nlp.ggjllbb.mongodb.net/?appName=NLP",
         db_name="test", # Your DB Name
         file_id=request.fileId,
         query=request.question,

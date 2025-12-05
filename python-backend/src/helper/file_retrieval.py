@@ -11,28 +11,38 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_community.vectorstores import FAISS
 from PyPDF2 import PdfReader
 from langchain_core.documents import Document
-
+load_dotenv()
+from langchain_huggingface import HuggingFaceEmbeddings
+from sentence_transformers import SentenceTransformer
 def retrieve_file_by_id(mongo_uri: str, db_name: str, file_id: str) -> Tuple[Optional[bytes], Optional[str]]:
-    """
-    Retrieve file from GridFS directly using the GridFS file ID.
-    file_id is the GridFS ID (uploads.files._id)
-    """
     try:
         client = MongoClient(mongo_uri)
         db = client[db_name]
         
-        # 1. Convert file_id string to ObjectId
-        grid_fs_id = ObjectId(file_id)
+        # Ensure the ID is clean (remove spaces/newlines)
+        clean_id = file_id.strip()
+        grid_fs_id = ObjectId(clean_id)
         
-        # 2. Access GridFS
         fs = gridfs.GridFS(db, collection="uploads")
         
-        # 3. Check if file exists in GridFS
+        # --- DEBUG CHECK ---
         if not fs.exists(grid_fs_id):
-            logging.error(f"GridFS file with ID {file_id} not found.")
+            logging.error(f"❌ TARGET NOT FOUND: {clean_id}")
+            
+            # Count total files
+            count = db["uploads.files"].count_documents({})
+            logging.error(f"   Files in 'uploads' bucket: {count}")
+            
+            if count == 0:
+                logging.error("   ⚠️ THE BUCKET IS EMPTY. You are definitely connected to the wrong Database.")
+            else:
+                logging.error("   ⚠️ Here are the first 3 IDs Python CAN see:")
+                for file_doc in db["uploads.files"].find().limit(3):
+                    logging.error(f"   - Found: {file_doc['_id']} | Name: {file_doc.get('filename')}")
+            
             return None, None
-        
-        # 4. Retrieve file from GridFS
+        # -------------------
+
         grid_out = fs.get(grid_fs_id)
         file_stream = grid_out.read()
         filename = grid_out.filename
@@ -68,19 +78,20 @@ def create_vector_store(documents: List[Document], api_key: str = None):
     Uses Google Generative AI embeddings for consistency with Gemini.
     """
     try:
-        from langchain_google_genai import GoogleGenerativeAIEmbeddings
+        # from langchain_google_genai import GoogleGenerativeAIEmbeddings
         
-        if not api_key:
-            api_key = os.getenv('GOOGLE_API_KEY')
+        # if not api_key:
+        #     api_key = os.getenv('GOOGLE_API_KEY')
         
-        if not api_key:
-            logging.error("Google API key not found in environment.")
-            return None
+        # if not api_key:
+        #     logging.error("Google API key not found in environment.")
+        #     return None
             
-        embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/embedding-001",
-            google_api_key=api_key
-        )
+        # embeddings = GoogleGenerativeAIEmbeddings(
+        #     model="models/embedding-001",
+        #     google_api_key=api_key
+        # )
+        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
         return FAISS.from_documents(documents, embeddings)
     except Exception as e:
         logging.error(f"Error creating vector store: {e}")
