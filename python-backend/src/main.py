@@ -52,7 +52,6 @@ app.add_middleware(
 @app.get("/")
 async def read_root():
     return {"message": "FastAPI backend with MongoDB integration is running."}
-
 @app.post("/generate-quiz")
 async def chat_endpoint(request: QuizRequest):
     result = run_application(

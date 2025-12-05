@@ -8,7 +8,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage, SystemMessage
-
+from fastapi.responses import JSONResponse
 from helper.file_retrieval import retrieve_file_by_id, extract_text_from_pdf, create_vector_store, search_chunks
 
 def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_key):
@@ -28,7 +28,7 @@ def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_
 
     retriever = faissDB.as_retriever(
         search_type="similarity_score_threshold",
-        # search_kwargs={'score_threshold': 0.2}
+        search_kwargs={"k": 10,'score_threshold': 0.1}
     )
 
     llm = ChatGoogleGenerativeAI(
@@ -57,7 +57,7 @@ def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_
         HumanMessage(content=query),
         retrieval_context
     ])
-    return {"response": response.content}
+    return JSONResponse(content={"response": response})
 
 
 
