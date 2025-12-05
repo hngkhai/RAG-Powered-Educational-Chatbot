@@ -69,6 +69,7 @@ def search_chunks(retriever, query: str) -> SystemMessage:
     search_result = retriever.invoke(query)
     context_texts = [r.page_content for r in search_result]
     instruction = "Use the context below to assist student to study and understand\n"
+    print(context_texts)
     return SystemMessage(content=f"{instruction}Context: {context_texts}\nUser Query: {query}")
 
 
