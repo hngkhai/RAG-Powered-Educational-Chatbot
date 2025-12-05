@@ -75,7 +75,6 @@ def search_chunks(retriever, query: str) -> SystemMessage:
 def create_vector_store(documents: List[Document], api_key: str = None):
     """
     Create a FAISS vector store from documents.
-    Uses Google Generative AI embeddings for consistency with Gemini.
     """
     try:
         embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")

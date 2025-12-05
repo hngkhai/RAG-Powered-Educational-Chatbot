@@ -34,9 +34,47 @@ function ChatPanel({ chapter, student, course }) {
         method: "POST",
         body
       });
-      const answerText =
-        (data && (data.answer || data.response || data.text || data.message)) ||
-        JSON.stringify(data, null, 2);
+      let raw = data;
+
+      // If backend returned an object, prefer known fields
+      if (data && typeof data === "object") {
+        raw = data.response || data.answer || data.text || data.message || data;
+      }
+
+      // If raw is a string that looks like JSON, try to parse and extract fields
+      if (typeof raw === "string") {
+        const s = raw.trim();
+        if (s.startsWith("{") || s.startsWith("[")) {
+          try {
+            const parsed = JSON.parse(s);
+            raw = parsed.response || parsed.answer || parsed.text || parsed.message || parsed;
+          } catch (parseErr) {
+            // Not JSON — keep the original string
+          }
+        }
+      }
+
+      // Convert raw -> answerText (handles string, array, object)
+      let answerText = "";
+      if (typeof raw === "string") {
+        answerText = raw;
+      } else if (raw && typeof raw === "object") {
+        if (Array.isArray(raw)) {
+          answerText = raw
+            .map(item =>
+              typeof item === "string"
+                ? item
+                : item.content || item.text || JSON.stringify(item)
+            )
+            .join("\n");
+        } else {
+          answerText =
+            raw.content || raw.text || raw.answer || Object.values(raw).join(" ") || JSON.stringify(raw);
+        }
+      } else {
+        answerText = String(raw);
+      }
+
       const context =
         (data && (data.context || data.retrievedChunks || data.chunks)) || null;
       const assistantMessage = {
