@@ -8,7 +8,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.messages import HumanMessage, SystemMessage
-from fastapi.responses import JSONResponse
+
 from helper.file_retrieval import retrieve_file_by_id, extract_text_from_pdf, create_vector_store, search_chunks
 
 def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_key):
@@ -48,7 +48,9 @@ def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_
     1. **Strict Grounding:** Answer the student's question using ONLY the 'Reference Context' provided below. Do not use outside knowledge.
     2. **Honesty:** If the answer is not in the Reference Context, state clearly: "I cannot find the answer to that question in the provided document." Do not try to make up an answer.
     3. **Tone:** Be academic, clear, and encouraging. If the context contains complex technical terms, briefly explain them as a professor would.
-    
+    4. Do not use asterisks, bullet points, or any kind of list symbols in your response.\n\n'
+    5. Write your answer in well-structured paragraph without using asterisks or bullet points\n'
+    6. Don't insert next line, write your response in only one paragraph.\n\n'
     ### Reference Context:
     {retrieval_context}
     """
@@ -57,7 +59,7 @@ def run_application(mongo_uri: str, db_name: str, file_id: str, query: str, api_
         HumanMessage(content=query),
         retrieval_context
     ])
-    return JSONResponse(content={"response": response})
+    return {"response": response.content}
 
 
 
